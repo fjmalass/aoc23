@@ -16,13 +16,14 @@
 namespace fs = std::filesystem;
 
 // #include "Day01/day01.h"
-#include "Day02/day02.h"
+// #include "Day02/day02.h"
+#include "Day03/day03.h"
 
 
 int main()
 {
-	constexpr auto partASolver = &Day02A::PrintSolution;
-	constexpr auto partBSolver = &Day02B::PrintSolution;
+	constexpr auto partASolver = &Day03A::PrintSolution;
+	constexpr auto partBSolver = &Day03B::PrintSolution;
 
 	const std::array<std::function<void()>, 2> solvers{partASolver, partBSolver};
 	const std::array<std::string, 2> parts{"partA", "partB"};
