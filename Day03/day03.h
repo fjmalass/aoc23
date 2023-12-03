@@ -14,11 +14,9 @@ constexpr char NULLCHAR = '\0';
 constexpr char EMPTYCHAR = '.';
 
 
-
 bool is_inside( int row, int col, int rows, int cols ) 
 {
-   return (row >= 0) && (row < rows)
-	&& (col >= 0) && (col < cols);
+   return (row >= 0) && (row < rows) && (col >= 0) && (col < cols);
 };
 
 
@@ -124,6 +122,7 @@ std::vector<std::vector<std::shared_ptr<Part>>> parse_grid(const std::vector<std
 	const size_t n_cols = lines[0].size();
 
 	size_t n_parts { 0ull };
+	size_t n_symbols { 0ull };
 
 
 	std::vector<std::vector<std::shared_ptr<Part>>> grid(n_rows, std::vector<std::shared_ptr<Part>>(n_cols));
@@ -131,10 +130,11 @@ std::vector<std::vector<std::shared_ptr<Part>>> parse_grid(const std::vector<std
 
 	for (auto row_idx : std::views::iota(0ull, n_rows)) 
 	{
-	       std::cout << row_idx << "\n";
-
 		const std::string& line = lines[row_idx];
-	std::cout << line << std::endl;
+      #if DEBUG
+	       std::cout << row_idx << ": " << line << std::endl;
+      #endif // DEBUG
+
 		std::vector<std::shared_ptr<Part>>& row = grid[row_idx];
 		for (auto col_idx : std::views::iota(0ull, n_cols)) 
 		{
@@ -174,7 +174,7 @@ std::cout << "Adding to pointer " << *row[col_idx] << std::endl;
 			#if DEBUG
 std::cout << "Symbol " << ch << std::endl;
 			#endif // DEBUG
-				n_parts++;
+				n_symbols++;
 				row[col_idx] = std::make_shared<Part>(ch);
 			}
 #if DEBUG
@@ -185,6 +185,7 @@ if (row[col_idx]) std::cout << row_idx << "," << col_idx <<  ": " << ch << " -> 
 	}
 
 	std::cout << "Parts: " << n_parts << std::endl;
+	std::cout << "Symbols: " << n_symbols << std::endl;
 	return grid;
 }
 
@@ -222,8 +223,8 @@ namespace Day03A
 						if (neighbor && neighbor->is_part())
 						{
 							selected_parts.insert(neighbor);
-				#if !DEBUG
-		  std::cout << "Adding " << nrow_idx << "x" << ncol_idx << ": " << *neighbor <<  ", Selected : " << selected_parts.size() << std::endl;
+				#if DEBUG
+				  std::cout << "Adding " << nrow_idx << "x" << ncol_idx << ": " << *neighbor <<  ", Selected : " << selected_parts.size() << std::endl;
 				#endif // DEBUG
 						}
 					}
@@ -237,6 +238,7 @@ namespace Day03A
 		}
 
 		std::cout << "--------------\n";
+		std::cout << "Number of Parts connected to Symbols: " << selected_parts.size() << std::endl;
 		std::cout << "Sum: " << sum << std::endl;
 		std::cout << "--------------" << std::endl;
 	}
@@ -250,12 +252,12 @@ namespace Day03B
 		// fs::path file_path("Day03/Test03A.txt");
 		std::cout << "Day03 Part B" << ": " << file_path.string() <<  std::endl;
 		std::vector<std::string> input = read_lines_from_file(file_path);
-
 		std::vector<std::vector<std::shared_ptr<Part>>> grid = parse_grid(input);
+
  	        const size_t n_rows = grid.size();
 		const size_t n_cols = grid[0].size();
 
-	// Select parts
+		// Select parts
 		std::set<std::pair<std::shared_ptr<Part>, std::shared_ptr<Part>>> selected_parts;
 		for (size_t row_idx: std::views::iota(0ull, n_rows) )
 		{
@@ -268,7 +270,7 @@ namespace Day03B
 				{
 					const auto neighbor_indices = get_neighbors(row_idx, col_idx, n_rows, n_cols);
 				#if DEBUG
-	  std::cout << "Element: " << row_idx << "x" << col_idx << ": " << *el <<  ", neighbors: " << neighbor_indices.size() << std::endl;
+				  std::cout << "Element: " << row_idx << "x" << col_idx << ": " << *el <<  ", neighbors: " << neighbor_indices.size() << std::endl;
 				#endif // DEBUG
 					for (auto[nrow_idx, ncol_idx] : neighbor_indices)
 					{
@@ -279,6 +281,7 @@ namespace Day03B
 						}
 					}
 				}
+				// Get pair
 				if ( local_parts.size() == 2)
 				{
 					auto it = local_parts.begin();
@@ -297,16 +300,15 @@ namespace Day03B
 			}
 		}
 
-
 		auto sum = 0;	
 		for (auto& [first, second] : selected_parts) 
 		{
 			sum += first-> sn * second -> sn;
 		}
- 
 
 		std::cout << "--------------\n";
-		std::cout << "Sum: " << sum << std::endl;
+		std::cout << "Number of Pairs: " << selected_parts.size() << std::endl;
+		std::cout << "Sum Product: " << sum << std::endl;
 		std::cout << "--------------" << std::endl;
 	}
 }
