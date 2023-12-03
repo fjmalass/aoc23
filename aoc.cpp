@@ -15,7 +15,7 @@
 
 namespace fs = std::filesystem;
 
-#include "Day01/day01.h"
+// #include "Day01/day01.h"
 #include "Day02/day02.h"
 
 
