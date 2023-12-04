@@ -22,8 +22,8 @@ bool is_inside( int row, int col, int rows, int cols )
 
 
 // Get the 8 neighbors (exclude center) within the range
-template<typename Int>
-std::vector<std::pair<Int, Int>> get_neighbors(Int row, Int col, Int rows, Int cols)
+template<typename Int, typename UInt>
+std::vector<std::pair<Int, Int>> get_neighbors(Int row, Int col, UInt rows, UInt cols)
 {
 	std::vector<std::pair<Int, Int>> neighbors;
 	neighbors.reserve(8);
@@ -129,17 +129,19 @@ std::vector<std::vector<std::shared_ptr<Part>>> parse_grid(const std::vector<std
 	std::vector<std::vector<std::shared_ptr<Part>>> grid(n_rows, std::vector<std::shared_ptr<Part>>(n_cols));
 	std::cout << "Allocated Grid size: RxC: " << n_rows << "x" << n_cols << std::endl;
 
-	for (auto row_idx : std::views::iota(0ull, n_rows)) 
+	// for (auto row_idx : std::views::iota(0ull, n_rows)) 
+	for (const auto& [row_idx, line] : std::views::enumerate(lines)) 
 	{
-		const std::string& line = lines[row_idx];
+		// const std::string& line = lines[row_idx];
       #if DEBUG
 	       std::cout << row_idx << ": " << line << std::endl;
       #endif // DEBUG
 
 		std::vector<std::shared_ptr<Part>>& row = grid[row_idx];
-		for (auto col_idx : std::views::iota(0ull, n_cols)) 
+		// for (auto col_idx : std::views::iota(0ull, n_cols)) 
+		for (const auto& [col_idx, ch] : std::views::enumerate(line)) 
 		{
-			const char ch = line[col_idx];
+			// const char ch = line[col_idx];
 			if (ch == EMPTYCHAR) 
 			{
 				row[col_idx] = nullptr;
@@ -206,12 +208,10 @@ namespace Day03A
 
 	// Select parts
 		std::set<std::shared_ptr<Part>> selected_parts;
-		for (size_t row_idx: std::views::iota(0ull, n_rows) )
+		for (const auto&[row_idx, row]: std::views::enumerate(grid) )
 		{
-			const auto& row	= grid[row_idx];
-			for (size_t col_idx: std::views::iota(0ull, n_cols) )
+			for (const auto&[col_idx, el]: std::views::enumerate(row) )
 			{
-				const auto& el = row[col_idx];
 				if (el && el->is_symbol())
 				{
 					const auto neighbor_indices = get_neighbors(row_idx, col_idx, n_rows, n_cols);
@@ -258,13 +258,12 @@ namespace Day03B
 
 		// Select parts
 		std::set<std::pair<std::shared_ptr<Part>, std::shared_ptr<Part>>> selected_parts;
-		for (size_t row_idx: std::views::iota(0ull, n_rows) )
+		for( const auto&[row_idx, row] : std::views::enumerate(grid))
 		{
-			const auto& row	= grid[row_idx];
-			for (size_t col_idx: std::views::iota(0ull, n_cols) )
+			// const auto& row	= grid[row_idx];
+			for (const auto&[col_idx, el]: std::views::enumerate(row) )
 			{
 				std::set<std::shared_ptr<Part>> local_parts;
-				const auto& el = row[col_idx];
 				if (el && el->is_symbol())
 				{
 					const auto neighbor_indices = get_neighbors(row_idx, col_idx, n_rows, n_cols);
