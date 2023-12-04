@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <numeric>
+#include <functional>
 
 #include "../timer.h"
 #include "../readfile.h"
@@ -61,14 +62,14 @@ struct Part
 	Part(int part_number) : sn{part_number}
 	{
 		#if DEBUG
-		std::cout << "Creating:  " <<  *this << std::endl;
+		std::cout << "Creating:  SN" << part_number  << std::endl;
 		#endif // DEBUG
 	}
 
 	Part(char ch) : symbol{ch}
 	{
 		#if DEBUG
-		std::cout << "Creating:  " <<  *this << std::endl;
+		std::cout << "Creating: Symbol  " << ch << std::endl;
 		#endif // DEBUG
 	}
 
@@ -99,7 +100,7 @@ struct Part
 };
 
 
-std::ostream& operator<<(std::ostream& os, const Part& part) 
+inline std::ostream& operator<<(std::ostream& os, const Part& part) 
 {
 	if (part.is_part())
 	{
@@ -231,11 +232,9 @@ namespace Day03A
 				}
 			}
 		}
-		int sum = 0;
-		for (auto ptr : selected_parts )
-		{
-			sum += ptr->sn;
-		}
+
+		auto to_sn = [] (auto part) -> int { return part->sn;};
+		int sum = std::ranges::fold_left( selected_parts | std::views::transform(to_sn), 0, std::plus<>());
 
 		std::cout << "--------------\n";
 		std::cout << "Number of Parts connected to Symbols: " << selected_parts.size() << std::endl;
@@ -300,11 +299,8 @@ namespace Day03B
 			}
 		}
 
-		auto sum = 0;	
-		for (auto& [first, second] : selected_parts) 
-		{
-			sum += first-> sn * second -> sn;
-		}
+		auto to_prod = [](auto pair) -> int { return pair.first->sn * pair.second->sn;};
+		int sum = std::ranges::fold_left( selected_parts | std::views::transform(to_prod), 0, std::plus<>());
 
 		std::cout << "--------------\n";
 		std::cout << "Number of Pairs: " << selected_parts.size() << std::endl;
