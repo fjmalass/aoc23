@@ -15,6 +15,7 @@
 constexpr char NULLCHAR = '\0';
 constexpr char EMPTYCHAR = '.';
 
+// Should implement a depth first search
 
 using CardIndex = int;
 

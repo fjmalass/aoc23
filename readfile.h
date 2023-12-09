@@ -16,6 +16,7 @@ inline std::vector<std::string> read_lines_from_file( const fs::path& file_path 
 		std::cerr << "File '" << file_path << "' Does not exist\n";
 		return lines;
 	}
+
 	std::ifstream file_stream{file_path};
 	if (!file_stream.is_open()) 
 	{
